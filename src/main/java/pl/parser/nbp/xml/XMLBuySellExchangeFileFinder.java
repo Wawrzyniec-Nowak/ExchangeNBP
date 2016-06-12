@@ -14,23 +14,35 @@ import static pl.parser.nbp.config.Constants.NBP.BUY_SELL_TABLE_TYPE;
 import static pl.parser.nbp.config.Constants.NBP.PREFIX_PATH;
 
 /**
- * Created by wawek on 11.06.16.
+ * Implementation of the finder which is responsible for looking for files which have only buy and sell tables.
  */
-public class XMLDownloader {
+public class XMLBuySellExchangeFileFinder implements XMLExchangeFileFinder {
 
     private LocalDate publicationDateFrom;
     private LocalDate publicationDateTo;
 
-    public XMLDownloader(LocalDate publicationDateFrom, LocalDate publicationDateTo) {
+    /**
+     * Creates file finder object and sets its fields.
+     * @param publicationDateFrom Starting period date.
+     * @param publicationDateTo Ending period date.
+     */
+    public XMLBuySellExchangeFileFinder(LocalDate publicationDateFrom, LocalDate publicationDateTo) {
         this.publicationDateFrom = publicationDateFrom;
         this.publicationDateTo = publicationDateTo;
     }
 
-    public List<String> getXMLFileNamesForPeriod() {
+    /**
+     * Looks for XML files' names basing on date range. The retrieved names are the names only for files
+     * which stores buy and sell exchange tables.
+     * @return List of the files' names which stores only buy and sell exchange tables
+     * and which meet dates range criterion.
+     */
+    @Override
+    public List<String> findXMLFiles() {
         int yearFrom = publicationDateFrom.getYear();
         int yearTo = publicationDateTo.getYear();
 
-        List<String> xmlTitles = new ArrayList<>();
+        List<String> xmlFiles = new ArrayList<>();
         for (int year = yearFrom; year <= yearTo; year++) {
             URL url = null;
             try {
@@ -44,7 +56,7 @@ public class XMLDownloader {
                     String line;
                     while ((line = br.readLine()) != null) {
                         if (line.startsWith(BUY_SELL_TABLE_TYPE)) {
-                            xmlTitles.add(line);
+                            xmlFiles.add(line);
                         }
                     }
                 }
@@ -52,7 +64,7 @@ public class XMLDownloader {
                 System.err.println("Exception was thrown during reading remote files " + e);
             }
         }
-        return xmlTitles;
+        return xmlFiles;
     }
 
 }

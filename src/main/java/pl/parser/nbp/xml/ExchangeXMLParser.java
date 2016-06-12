@@ -11,43 +11,50 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by wawek on 11.06.16.
+ * Implementation of the parser which is responsible for retrieving Exchange entities from files.
  */
-public class ExchangeParser implements Parser {
+public class ExchangeXMLParser implements XMLParser<Exchange> {
 
-    private List<Exchange> exchanges;
     private Filter filter;
 
-    public ExchangeParser(Filter filter, List<Exchange> exchanges) {
+    /**
+     * Creates parser object and sets the value of the filter which is needed during parsing XML files.
+     * @param filter
+     */
+    public ExchangeXMLParser(Filter filter) {
         this.filter = filter;
-        this.exchanges = exchanges;
     }
 
-    public void parse(String path) {
-        URL url = null;
+    /**
+     * Pareses XML file and retrieves Exchange entities which meets the criterion.
+     * @param path Path of the XML file.
+     * @return List of the Exchange objects which where retrieved from the XML file and
+     * which pass the filter.
+     */
+    @Override
+    public List<Exchange> parse(String path) {
+        URL url;
         try {
             url = new URL(path);
         } catch (MalformedURLException e) {
             throw new IllegalArgumentException("There is no resource under specified path");
         }
 
+        List<Exchange> exchanges = new ArrayList<>();
         try (InputStream stream = url.openStream()){
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser saxParser = factory.newSAXParser();
             ExchangeHandler handler = new ExchangeHandler();
             handler.filter(filter);
             saxParser.parse(stream, handler);
-            this.exchanges.addAll(handler.getExchanges());
+            exchanges.addAll(handler.getExchanges());
         } catch (IOException | ParserConfigurationException | SAXException e) {
             System.err.println("An exception was thrown during parsing " + e);
         }
-    }
-
-    public List<Exchange> getExchanges() {
-        return Collections.unmodifiableList(exchanges);
+        return exchanges;
     }
 }

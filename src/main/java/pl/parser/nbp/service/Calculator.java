@@ -3,11 +3,19 @@ package pl.parser.nbp.service;
 import java.math.BigDecimal;
 
 /**
- * Created by wawek on 11.06.16.
+ * Computes arithmetic operations.
  */
 public interface Calculator {
 
+    /**
+     * Calculates an average value.
+     * @return The average value.
+     */
     BigDecimal calculateAverage();
 
+    /**
+     * Calculates a standard deviation value.
+     * @return The standard deviation value.
+     */
     BigDecimal calculateStandardDeviation();
 }

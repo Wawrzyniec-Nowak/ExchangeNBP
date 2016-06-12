@@ -3,18 +3,21 @@ package pl.parser.nbp.model;
 import java.math.BigDecimal;
 
 /**
- * Created by wawek on 11.06.16.
+ * Model of the NBP exchange entity. Stores information about buy exchange and sell exchange.
  */
 public final class Exchange {
 
     private BigDecimal buyValue;
     private BigDecimal sellValue;
-    private String name;
 
-    public Exchange(BigDecimal buyValue, BigDecimal sellValue, String name) {
+    /**
+     * Creates object filling its fields.
+     * @param buyValue The buy value of the exchange.
+     * @param sellValue The sell value of the exchange.
+     */
+    public Exchange(BigDecimal buyValue, BigDecimal sellValue) {
         this.buyValue = buyValue;
         this.sellValue = sellValue;
-        this.name = name;
     }
 
     public BigDecimal getBuyValue() {
@@ -25,12 +28,8 @@ public final class Exchange {
         return sellValue;
     }
 
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String toString() {
-        return String.format("Exchange{buyValue=%s, sellValue=%s, name='%s'}", buyValue, sellValue, name);
+        return String.format("Exchange{buyValue=%s, sellValue=%s}", buyValue, sellValue);
     }
 }

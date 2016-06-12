@@ -3,7 +3,7 @@ package pl.parser.nbp.model;
 import java.time.LocalDate;
 
 /**
- * Created by wawek on 11.06.16.
+ * Filter to compute values only for specified input parameters: currency, dates range.
  */
 public class Filter {
 

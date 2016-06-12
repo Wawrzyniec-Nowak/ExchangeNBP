@@ -16,7 +16,7 @@ import java.util.List;
 import static pl.parser.nbp.config.Constants.NBP.*;
 
 /**
- * Created by wawek on 11.06.16.
+ * Implementation of the SAX handler which parses the XML file and fetches Exchange entities from it.
  */
 public class ExchangeHandler extends DefaultHandler {
 
@@ -33,14 +33,29 @@ public class ExchangeHandler extends DefaultHandler {
     private boolean exchangeBuyValueFlag;
     private boolean exchangeSellValueFlag;
 
+    /**
+     * Creates handler object and initializes the list of exchange objects.
+     */
     public ExchangeHandler() {
         this.exchanges = new ArrayList<>();
     }
 
+    /**
+     * Sets the filter value.
+     * @param filter
+     */
     public void filter(Filter filter) {
         this.filter = filter;
     }
 
+    /**
+     * Sets the boolean flags basing on the xml tag.
+     * @param uri
+     * @param localName
+     * @param qName
+     * @param attributes
+     * @throws SAXException
+     */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equalsIgnoreCase(PUBLICATION_DATE)) {
@@ -54,6 +69,14 @@ public class ExchangeHandler extends DefaultHandler {
         }
     }
 
+    /**
+     * Creates Exchange object and stores it in the list. Only entities which are valid for specified filter
+     * are passed to the list.
+     * @param uri
+     * @param localName
+     * @param qName
+     * @throws SAXException
+     */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         if (qName.equalsIgnoreCase(POSITION)) {
@@ -70,8 +93,7 @@ public class ExchangeHandler extends DefaultHandler {
 
                     Exchange exchange = new Exchange(
                             new BigDecimal(exchangeBuyValue.replaceAll(",", ".")),
-                            new BigDecimal(exchangeSellValue.replaceAll(",", ".")),
-                            currencyName
+                            new BigDecimal(exchangeSellValue.replaceAll(",", "."))
                     );
                     exchanges.add(exchange);
                 }
@@ -79,6 +101,14 @@ public class ExchangeHandler extends DefaultHandler {
         }
     }
 
+    /**
+     * Implementation of the default method which is responsible for retrieving value placed between
+     * tags in XML file.
+     * @param ch
+     * @param start
+     * @param length
+     * @throws SAXException
+     */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (publicationDateFlag) {
@@ -99,6 +129,10 @@ public class ExchangeHandler extends DefaultHandler {
         }
     }
 
+    /**
+     * Returns the immutable list of the parsed entities.
+     * @return The immutable list of Exchanges.
+     */
     public List<Exchange> getExchanges() {
         return Collections.unmodifiableList(exchanges);
     }

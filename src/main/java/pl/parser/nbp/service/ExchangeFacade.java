@@ -2,8 +2,10 @@ package pl.parser.nbp.service;
 
 import pl.parser.nbp.model.Exchange;
 import pl.parser.nbp.model.Filter;
-import pl.parser.nbp.xml.ExchangeParser;
-import pl.parser.nbp.xml.XMLDownloader;
+import pl.parser.nbp.xml.ExchangeXMLParser;
+import pl.parser.nbp.xml.XMLParser;
+import pl.parser.nbp.xml.XMLBuySellExchangeFileFinder;
+import pl.parser.nbp.xml.XMLExchangeFileFinder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -15,7 +17,7 @@ import static pl.parser.nbp.config.Constants.NBP.DATE_FORMAT;
 import static pl.parser.nbp.config.Constants.NBP.PREFIX_PATH;
 
 /**
- * Created by wawek on 11.06.16.
+ * Facade design pattern which covers all actions needed to compute desired output.
  */
 public class ExchangeFacade {
 
@@ -23,6 +25,10 @@ public class ExchangeFacade {
     private BigDecimal average;
     private BigDecimal standardDeviation;
 
+    /**
+     * Creates the instance of the class. This project limits the number of instanced to one.
+     * @return The created facade object.
+     */
     public static ExchangeFacade getInstance() {
         if (instance == null) {
             instance = new ExchangeFacade();
@@ -33,21 +39,28 @@ public class ExchangeFacade {
     private ExchangeFacade() {
     }
 
-    public void startComputing(String currencyName, String publicationFrom, String publicationTo) {
+    /**
+     * Hides all operations which are required to calculate average and standard deviation values.
+     * Receive arguments passed from user input then looks for xml files which stores expected exchanges,
+     * then parses these files and calculate output basing on parsed entities.
+     * @param currencyName Name of the currency for which the output should be calculated.
+     * @param publicationFrom Lower date of a range for which the output should be calculated.
+     * @param publicationTo Higher date of a range for which the output should be calculated.
+     */
+    public void compute(String currencyName, String publicationFrom, String publicationTo) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
         LocalDate publicationDateFrom = LocalDate.parse(publicationFrom, formatter);
         LocalDate publicationDateTo = LocalDate.parse(publicationTo, formatter);
 
         // downloading
-        XMLDownloader downloader = new XMLDownloader(publicationDateFrom, publicationDateTo);
-        List<String> xmlFileNames = downloader.getXMLFileNamesForPeriod();
+        XMLExchangeFileFinder fileFinder = new XMLBuySellExchangeFileFinder(publicationDateFrom, publicationDateTo);
+        List<String> xmlFileNames = fileFinder.findXMLFiles();
 
         // parsing
-        ExchangeParser parser =
-                new ExchangeParser(new Filter(currencyName, publicationDateFrom, publicationDateTo), new ArrayList<>());
-        xmlFileNames.forEach(xmlFile -> parser.parse(PREFIX_PATH + xmlFile + ".xml"));
-
-        List<Exchange> filteredExchanges = parser.getExchanges();
+        List<Exchange> filteredExchanges = new ArrayList<>();
+        XMLParser<Exchange> parser =
+                new ExchangeXMLParser(new Filter(currencyName, publicationDateFrom, publicationDateTo));
+        xmlFileNames.forEach(xmlFile -> filteredExchanges.addAll(parser.parse(PREFIX_PATH + xmlFile + ".xml")));
 
         // calculating
         Calculator calculator = new ExchangeCalculator(filteredExchanges);
@@ -55,6 +68,9 @@ public class ExchangeFacade {
         this.standardDeviation = calculator.calculateStandardDeviation();
     }
 
+    /**
+     * Prints the calculated average and standard deviation values to the standard output.
+     */
     public void printCalculation() {
         System.out.println("Average: " + average + "\nStandard deviation: " + standardDeviation);
     }

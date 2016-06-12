@@ -1,10 +1,13 @@
 package pl.parser.nbp.config;
 
 /**
- * Created by wawek on 11.06.16.
+ * Holds all constant fields used in project
  */
 public class Constants {
 
+    /**
+     * Inner class related with NBP exchange constants
+     */
     public static class NBP {
 
         public static final String PREFIX_PATH = "http://www.nbp.pl/kursy/xml/";

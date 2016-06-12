@@ -1,7 +1,7 @@
 package pl.parser.nbp;
 
 /**
- * Created by wawek on 11.06.16.
+ * Holds all test required to verify calculator methods.
  */
 public class CalculatorTest {
 }
