@@ -19,9 +19,8 @@ public class MainClass {
      */
     public static void main(String[] args) {
 
-        ExchangeValidator validator = ExchangeValidator.getInstance();
-        if (!validator.validateInputLength(args)) {
-            System.err.println(validator.getError());
+        if (!ExchangeValidator.validateInputLength(args)) {
+            System.err.println("You must specify currency code and dates range.");
             System.exit(-1);
         }
 
@@ -29,16 +28,14 @@ public class MainClass {
         String publicationDateFrom = args[1];
         String publicationDateTo = args[2];
 
-        if (!validator.validateDateFormat(publicationDateFrom, DATE_FORMAT) ||
-            !validator.validateDateFormat(publicationDateTo, DATE_FORMAT) ||
-            !validator.validateRangeDate(publicationDateFrom, publicationDateTo)) {
-            System.err.println(validator.getError());
+        if (!ExchangeValidator.validateDateFormat(publicationDateFrom, DATE_FORMAT) ||
+            !ExchangeValidator.validateDateFormat(publicationDateTo, DATE_FORMAT) ||
+            !ExchangeValidator.validateRangeDate(publicationDateFrom, publicationDateTo)) {
+            System.err.println("Check your dates.");
             System.exit(-1);
         }
 
-        System.out.println("Validation has passed");
-
-        ExchangeFacade facade = ExchangeFacade.getInstance();
+        ExchangeFacade facade = new ExchangeFacade();
 
         System.out.println("Computing has been started");
         long start = System.currentTimeMillis();

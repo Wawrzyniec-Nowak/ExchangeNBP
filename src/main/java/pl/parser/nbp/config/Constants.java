@@ -5,6 +5,10 @@ package pl.parser.nbp.config;
  */
 public class Constants {
 
+    private Constants() {
+
+    }
+
     /**
      * Inner class related with NBP exchange constants
      */

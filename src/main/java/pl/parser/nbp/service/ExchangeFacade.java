@@ -21,23 +21,8 @@ import static pl.parser.nbp.config.Constants.NBP.PREFIX_PATH;
  */
 public class ExchangeFacade {
 
-    private static ExchangeFacade instance;
     private BigDecimal average;
     private BigDecimal standardDeviation;
-
-    /**
-     * Creates the instance of the class. This project limits the number of instanced to one.
-     * @return The created facade object.
-     */
-    public static ExchangeFacade getInstance() {
-        if (instance == null) {
-            instance = new ExchangeFacade();
-        }
-        return instance;
-    }
-
-    private ExchangeFacade() {
-    }
 
     /**
      * Hides all operations which are required to calculate average and standard deviation values.
@@ -63,9 +48,9 @@ public class ExchangeFacade {
         xmlFileNames.forEach(xmlFile -> filteredExchanges.addAll(parser.parse(PREFIX_PATH + xmlFile + ".xml")));
 
         // calculating
-        Calculator calculator = new ExchangeCalculator(filteredExchanges);
-        this.average = calculator.calculateAverage();
-        this.standardDeviation = calculator.calculateStandardDeviation();
+        Calculator<Exchange> calculator = new ExchangeCalculator();
+        this.average = calculator.calculateAverage(filteredExchanges);
+        this.standardDeviation = calculator.calculateStandardDeviation(filteredExchanges);
     }
 
     /**

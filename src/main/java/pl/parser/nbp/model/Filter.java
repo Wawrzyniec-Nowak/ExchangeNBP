@@ -5,20 +5,26 @@ import java.time.LocalDate;
 /**
  * Filter to compute values only for specified input parameters: currency, dates range.
  */
-public class Filter {
+public final class Filter {
 
-    private String currencyName;
-    private LocalDate dateFrom;
-    private LocalDate dateTo;
+    private final String currencyCode;
+    private final LocalDate dateFrom;
+    private final LocalDate dateTo;
 
-    public Filter(String currencyName, LocalDate dateFrom, LocalDate dateTo) {
-        this.currencyName = currencyName;
+    /**
+     * Creates filter instance and sets its fields.
+     * @param currencyCode Code of the currency.
+     * @param dateFrom Starting date.
+     * @param dateTo Ending date.
+     */
+    public Filter(String currencyCode, LocalDate dateFrom, LocalDate dateTo) {
+        this.currencyCode = currencyCode;
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
     }
 
-    public String getCurrencyName() {
-        return currencyName;
+    public String getCurrencyCode() {
+        return currencyCode;
     }
 
     public LocalDate getDateFrom() {

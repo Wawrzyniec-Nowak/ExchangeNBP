@@ -19,11 +19,11 @@ import java.util.List;
  */
 public class ExchangeXMLParser implements XMLParser<Exchange> {
 
-    private Filter filter;
+    private final Filter filter;
 
     /**
      * Creates parser object and sets the value of the filter which is needed during parsing XML files.
-     * @param filter
+     * @param filter Filter used to get specific external content.
      */
     public ExchangeXMLParser(Filter filter) {
         this.filter = filter;

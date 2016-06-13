@@ -7,8 +7,8 @@ import java.math.BigDecimal;
  */
 public final class Exchange {
 
-    private BigDecimal buyValue;
-    private BigDecimal sellValue;
+    private final BigDecimal buyValue;
+    private final BigDecimal sellValue;
 
     /**
      * Creates object filling its fields.

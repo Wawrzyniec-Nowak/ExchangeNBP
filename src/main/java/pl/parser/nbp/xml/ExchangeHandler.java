@@ -18,9 +18,9 @@ import static pl.parser.nbp.config.Constants.NBP.*;
 /**
  * Implementation of the SAX handler which parses the XML file and fetches Exchange entities from it.
  */
-public class ExchangeHandler extends DefaultHandler {
+class ExchangeHandler extends DefaultHandler {
 
-    private List<Exchange> exchanges;
+    private final List<Exchange> exchanges;
     private Filter filter;
 
     private String publicationDate;
@@ -42,7 +42,7 @@ public class ExchangeHandler extends DefaultHandler {
 
     /**
      * Sets the filter value.
-     * @param filter
+     * @param filter Filter which is used to get specific external files.
      */
     public void filter(Filter filter) {
         this.filter = filter;
@@ -50,11 +50,19 @@ public class ExchangeHandler extends DefaultHandler {
 
     /**
      * Sets the boolean flags basing on the xml tag.
-     * @param uri
-     * @param localName
-     * @param qName
-     * @param attributes
-     * @throws SAXException
+     * @param uri The Namespace URI, or the empty string if the
+     *        element has no Namespace URI or if Namespace
+     *        processing is not being performed.
+     * @param localName The local name (without prefix), or the
+     *        empty string if Namespace processing is not being
+     *        performed.
+     * @param qName The qualified name (with prefix), or the
+     *        empty string if qualified names are not available.
+     * @param attributes The attributes attached to the element.  If
+     *        there are no attributes, it shall be an empty
+     *        Attributes object.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
      */
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -72,10 +80,16 @@ public class ExchangeHandler extends DefaultHandler {
     /**
      * Creates Exchange object and stores it in the list. Only entities which are valid for specified filter
      * are passed to the list.
-     * @param uri
-     * @param localName
-     * @param qName
-     * @throws SAXException
+     * @param uri The Namespace URI, or the empty string if the
+     *        element has no Namespace URI or if Namespace
+     *        processing is not being performed.
+     * @param localName The local name (without prefix), or the
+     *        empty string if Namespace processing is not being
+     *        performed.
+     * @param qName The qualified name (with prefix), or the
+     *        empty string if qualified names are not available.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
      */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
@@ -84,12 +98,9 @@ public class ExchangeHandler extends DefaultHandler {
             if (publicationDate != null) {
                 LocalDate publicationLocalDate = LocalDate.parse(publicationDate, formatter);
                 // filter entities during fetching in order to save memory
-                if (filter.getCurrencyName().equals(currencyName) &&
-                        ((publicationLocalDate.isBefore(filter.getDateTo()) &&
-                          publicationLocalDate.isAfter(filter.getDateFrom())) ||
-                        publicationLocalDate.isEqual(filter.getDateTo()) ||
-                        publicationLocalDate.isEqual(filter.getDateFrom()))
-                    ) {
+                if (filter.getCurrencyCode().equals(currencyName) &&
+                        ((publicationLocalDate.isBefore(filter.getDateTo()) && publicationLocalDate.isAfter(filter.getDateFrom())) ||
+                        publicationLocalDate.isEqual(filter.getDateTo()) || publicationLocalDate.isEqual(filter.getDateFrom()))) {
 
                     Exchange exchange = new Exchange(
                             new BigDecimal(exchangeBuyValue.replaceAll(",", ".")),
@@ -104,10 +115,12 @@ public class ExchangeHandler extends DefaultHandler {
     /**
      * Implementation of the default method which is responsible for retrieving value placed between
      * tags in XML file.
-     * @param ch
-     * @param start
-     * @param length
-     * @throws SAXException
+     * @param ch The characters.
+     * @param start The start position in the character array.
+     * @param length The number of characters to use from the
+     *               character array.
+     * @exception org.xml.sax.SAXException Any SAX exception, possibly
+     *            wrapping another exception.
      */
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {

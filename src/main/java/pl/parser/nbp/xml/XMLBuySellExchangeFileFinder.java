@@ -18,8 +18,8 @@ import static pl.parser.nbp.config.Constants.NBP.PREFIX_PATH;
  */
 public class XMLBuySellExchangeFileFinder implements XMLExchangeFileFinder {
 
-    private LocalDate publicationDateFrom;
-    private LocalDate publicationDateTo;
+    private final LocalDate publicationDateFrom;
+    private final LocalDate publicationDateTo;
 
     /**
      * Creates file finder object and sets its fields.
@@ -44,27 +44,36 @@ public class XMLBuySellExchangeFileFinder implements XMLExchangeFileFinder {
 
         List<String> xmlFiles = new ArrayList<>();
         for (int year = yearFrom; year <= yearTo; year++) {
-            URL url = null;
+            URL url;
             try {
                 url = new URL(PREFIX_PATH + "dir" + (year != 2016 ? (year + ".txt") : ".txt"));
             } catch (MalformedURLException e) {
                 throw new IllegalArgumentException("The path of a resource is malformed");
             }
-
-            try (InputStream stream = url.openStream()){
-                try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        if (line.startsWith(BUY_SELL_TABLE_TYPE)) {
-                            xmlFiles.add(line);
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                System.err.println("Exception was thrown during reading remote files " + e);
-            }
+            xmlFiles = readTablesFileContent(url);
         }
         return xmlFiles;
     }
 
+    /**
+     * Reads lines from external URL and returns list of these lines which starts with the letter "c" (buy and sell exchanges)
+     * @param url External resource path
+     * @return List of lines which start with letter "c"
+     */
+    private List<String> readTablesFileContent(URL url) {
+        List<String> xmlFiles = new ArrayList<>();
+        try (InputStream stream = url.openStream()){
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (line.startsWith(BUY_SELL_TABLE_TYPE)) {
+                        xmlFiles.add(line);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("IOException occurred during reading from stream");
+        }
+        return xmlFiles;
+    }
 }
