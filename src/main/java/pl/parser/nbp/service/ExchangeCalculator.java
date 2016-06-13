@@ -17,11 +17,15 @@ public class ExchangeCalculator implements Calculator<Exchange> {
      */
     @Override
     public BigDecimal calculateAverage(List<Exchange> exchanges) {
-        BigDecimal sum = exchanges
-                .stream()
-                .map(Exchange::getBuyValue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
+        if (exchanges.size() > 0) {
+            BigDecimal sum = exchanges
+                    .stream()
+                    .map(Exchange::getBuyValue)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            return sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
+        } else {
+            return BigDecimal.ZERO;
+        }
     }
 
     /**
@@ -31,19 +35,23 @@ public class ExchangeCalculator implements Calculator<Exchange> {
      */
     @Override
     public BigDecimal calculateStandardDeviation(List<Exchange> exchanges) {
-        BigDecimal sum = exchanges
-                .stream()
-                .map(Exchange::getSellValue)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal average = sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
+        if (exchanges.size() > 0) {
+            BigDecimal sum = exchanges
+                    .stream()
+                    .map(Exchange::getSellValue)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            BigDecimal average = sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
 
-        sum = BigDecimal.ZERO;
-        for (Exchange exchange : exchanges ) {
-            BigDecimal difference = average.subtract(exchange.getSellValue());
-            BigDecimal power = difference.multiply(difference);
-            sum = sum.add(power);
+            sum = BigDecimal.ZERO;
+            for (Exchange exchange : exchanges) {
+                BigDecimal difference = average.subtract(exchange.getSellValue());
+                BigDecimal power = difference.multiply(difference);
+                sum = sum.add(power);
+            }
+            BigDecimal underRoot = sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
+            return new BigDecimal(Math.sqrt(underRoot.doubleValue()));
+        } else {
+            return BigDecimal.ZERO;
         }
-        BigDecimal underRoot = sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
-        return new BigDecimal(Math.sqrt(underRoot.doubleValue()));
     }
 }

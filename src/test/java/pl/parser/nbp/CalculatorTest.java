@@ -18,29 +18,49 @@ import java.util.List;
 public class CalculatorTest {
 
     private Calculator<Exchange> calculator;
-    private List<Exchange> exchanges;
 
     @Before
     public void init() {
         calculator = new ExchangeCalculator();
-        exchanges = new ArrayList<>();
+    }
+
+    @Test
+    public void shouldCalculateAverageEqualsToTwoPointThree() {
+        List<Exchange> exchanges = new ArrayList<>();
         Exchange e1 = new Exchange(new BigDecimal("1.6"), new BigDecimal("2.1"), "EUR");
         Exchange e2 = new Exchange(new BigDecimal("2.2"), new BigDecimal("2.3"), "EUR");
         Exchange e3 = new Exchange(new BigDecimal("3.1"), new BigDecimal("2.5"), "EUR");
         exchanges.add(e1);
         exchanges.add(e2);
         exchanges.add(e3);
-    }
 
-    @Test
-    public void shouldCalculateAverageEqualsToTwoPointThree() {
         BigDecimal average = calculator.calculateAverage(exchanges);
         Assert.assertEquals(new BigDecimal("2.3"), average);
     }
 
     @Test
     public void shouldCalculateStandardDeviationEqualsToZeroPointTwo() {
+        List<Exchange> exchanges = new ArrayList<>();
+        Exchange e1 = new Exchange(new BigDecimal("1.1"), new BigDecimal("2.1"), "EUR");
+        Exchange e2 = new Exchange(new BigDecimal("2.0"), new BigDecimal("2.3"), "EUR");
+        Exchange e3 = new Exchange(new BigDecimal("1.5"), new BigDecimal("2.5"), "EUR");
+        exchanges.add(e1);
+        exchanges.add(e2);
+        exchanges.add(e3);
+
         BigDecimal standardDeviation = calculator.calculateStandardDeviation(exchanges);
         Assert.assertEquals(new BigDecimal("0.2"), standardDeviation.round(new MathContext(1)));
+    }
+
+    @Test
+    public void shouldReturnZeroAsAverageBecauseOfEmptyList() {
+        BigDecimal average = calculator.calculateAverage(new ArrayList<>());
+        Assert.assertSame(BigDecimal.ZERO, average);
+    }
+
+    @Test
+    public void shouldReturnZeroAsStandardDeviationBecauseOfEmptyList() {
+        BigDecimal standardDeviation = calculator.calculateStandardDeviation(new ArrayList<>());
+        Assert.assertSame(BigDecimal.ZERO, standardDeviation);
     }
 }

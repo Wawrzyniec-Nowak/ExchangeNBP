@@ -25,10 +25,10 @@ public class ParserTest {
     private final XMLParser parser = new ExchangeXMLParser();
     private final Storage storage = new Storage();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+    private final String path = PREFIX_PATH + "c073z070413.xml";
 
     @Test
     public void shouldParseXMLFileAndSaveEntityInStorage() {
-        String path = PREFIX_PATH + "c073z070413.xml";
         Filter filter = new Filter("USD", LocalDate.parse("2007-04-12", formatter), LocalDate.parse("2007-04-14", formatter));
         DefaultHandler handler = new ExchangeHandler(storage, filter);
         parser.parse(path, handler);
@@ -37,7 +37,6 @@ public class ParserTest {
 
     @Test
     public void shouldParseXMLFileAndSaveFilteredEntityInStorage() {
-        String path = PREFIX_PATH + "c073z070413.xml";
         Filter filter = new Filter("USD", LocalDate.parse("2007-04-12", formatter), LocalDate.parse("2007-04-14", formatter));
         DefaultHandler handler = new ExchangeHandler(storage, filter);
         parser.parse(path, handler);
@@ -46,7 +45,6 @@ public class ParserTest {
 
     @Test
     public void shouldParseXMLFileAndSaveNoEntityBecauseOfMissingCurrencyCode() {
-        String path = PREFIX_PATH + "c073z070413.xml";
         Filter filter = new Filter("XXX", LocalDate.parse("2007-04-12", formatter), LocalDate.parse("2007-04-14", formatter));
         DefaultHandler handler = new ExchangeHandler(storage, filter);
         parser.parse(path, handler);
@@ -55,7 +53,6 @@ public class ParserTest {
 
     @Test
     public void shouldParseXMLFileAndSaveEntityEvenIfRangeDatesAreEqual() {
-        String path = PREFIX_PATH + "c073z070413.xml";
         Filter filter = new Filter("USD", LocalDate.parse("2007-04-13", formatter), LocalDate.parse("2007-04-13", formatter));
         DefaultHandler handler = new ExchangeHandler(storage, filter);
         parser.parse(path, handler);
@@ -69,7 +66,6 @@ public class ParserTest {
 
     @Test
     public void shouldCallStartDocumentFromHandlerExactlyOnce() throws SAXException {
-        String path = PREFIX_PATH + "c073z070413.xml";
         DefaultHandler handler = mock(ExchangeHandler.class);
         parser.parse(path, handler);
 
