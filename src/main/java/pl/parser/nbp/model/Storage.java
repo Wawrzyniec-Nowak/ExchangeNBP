@@ -9,7 +9,7 @@ import java.util.List;
  */
 public final class Storage {
 
-    private List<Exchange> exchanges;
+    private final List<Exchange> exchanges;
 
     /**
      * Initializes storage and creates new list of stored exchanges.

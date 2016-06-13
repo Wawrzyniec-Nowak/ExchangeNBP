@@ -24,9 +24,9 @@ public class CalculatorTest {
     public void init() {
         calculator = new ExchangeCalculator();
         exchanges = new ArrayList<>();
-        Exchange e1 = new Exchange(new BigDecimal("1.6"), new BigDecimal("2.1"));
-        Exchange e2 = new Exchange(new BigDecimal("2.2"), new BigDecimal("2.3"));
-        Exchange e3 = new Exchange(new BigDecimal("3.1"), new BigDecimal("2.5"));
+        Exchange e1 = new Exchange(new BigDecimal("1.6"), new BigDecimal("2.1"), "EUR");
+        Exchange e2 = new Exchange(new BigDecimal("2.2"), new BigDecimal("2.3"), "EUR");
+        Exchange e3 = new Exchange(new BigDecimal("3.1"), new BigDecimal("2.5"), "EUR");
         exchanges.add(e1);
         exchanges.add(e2);
         exchanges.add(e3);

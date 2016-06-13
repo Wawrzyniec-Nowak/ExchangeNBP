@@ -18,16 +18,16 @@ import static pl.parser.nbp.config.Constants.NBP.*;
  */
 public class ExchangeHandler extends DefaultHandler {
 
-    private Storage storage;
-    private Filter filter;
+    private final Storage storage;
+    private final Filter filter;
 
     private String publicationDate;
-    private String currencyName;
+    private String currencyCode;
     private String exchangeBuyValue;
     private String exchangeSellValue;
 
     private boolean publicationDateFlag;
-    private boolean currencyNameFlag;
+    private boolean currencyCodeFlag;
     private boolean exchangeBuyValueFlag;
     private boolean exchangeSellValueFlag;
 
@@ -62,7 +62,7 @@ public class ExchangeHandler extends DefaultHandler {
         if (qName.equalsIgnoreCase(PUBLICATION_DATE)) {
             publicationDateFlag = true;
         } else if (qName.equalsIgnoreCase(CURRENCY_CODE)) {
-            currencyNameFlag = true;
+            currencyCodeFlag = true;
         } else if (qName.equalsIgnoreCase(BUY_EXCHANGE)) {
             exchangeBuyValueFlag = true;
         } else if (qName.equalsIgnoreCase(SELL_EXCHANGE)) {
@@ -91,13 +91,14 @@ public class ExchangeHandler extends DefaultHandler {
             if (publicationDate != null) {
                 LocalDate publicationLocalDate = LocalDate.parse(publicationDate, formatter);
                 // filter entities during fetching in order to save memory
-                if (filter.getCurrencyCode().equals(currencyName) &&
+                if (filter.getCurrencyCode().equals(currencyCode) &&
                         ((publicationLocalDate.isBefore(filter.getDateTo()) && publicationLocalDate.isAfter(filter.getDateFrom())) ||
                         publicationLocalDate.isEqual(filter.getDateTo()) || publicationLocalDate.isEqual(filter.getDateFrom()))) {
 
                     Exchange exchange = new Exchange(
                             new BigDecimal(exchangeBuyValue.replaceAll(",", ".")),
-                            new BigDecimal(exchangeSellValue.replaceAll(",", "."))
+                            new BigDecimal(exchangeSellValue.replaceAll(",", ".")),
+                            currencyCode
                     );
                     storage.save(exchange);
                 }
@@ -121,9 +122,9 @@ public class ExchangeHandler extends DefaultHandler {
             publicationDate = new String(ch, start, length);
             publicationDateFlag = false;
         }
-        if (currencyNameFlag) {
-            currencyName = new String(ch, start, length);
-            currencyNameFlag = false;
+        if (currencyCodeFlag) {
+            currencyCode = new String(ch, start, length);
+            currencyCodeFlag = false;
         }
         if (exchangeBuyValueFlag) {
             exchangeBuyValue= new String(ch, start, length);

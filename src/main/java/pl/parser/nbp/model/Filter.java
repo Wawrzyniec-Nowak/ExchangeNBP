@@ -19,6 +19,9 @@ public final class Filter {
      */
     public Filter(String currencyCode, LocalDate dateFrom, LocalDate dateTo) {
         this.currencyCode = currencyCode;
+        if (dateFrom.isAfter(dateTo)) {
+            throw new IllegalStateException("Starting date is after ending date");
+        }
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
     }

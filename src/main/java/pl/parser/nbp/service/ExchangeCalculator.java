@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Implementation of the exchange calculator which stores methods related with arithmetic operations on exchanges.
  */
-public final class ExchangeCalculator implements Calculator<Exchange> {
+public class ExchangeCalculator implements Calculator<Exchange> {
 
     /**
      * Calculates an average value from the values of the buy exchange

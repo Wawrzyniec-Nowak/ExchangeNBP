@@ -33,18 +33,13 @@ public class ValidatorTest {
     }
 
     @Test
-    public void shouldValidateDateInYYYYMMMDDFormatAndReturnTrue() {
-        Assert.assertTrue(ExchangeValidator.validateDateFormat("2016-Jan-01", "yyyy-MMM-dd"));
-    }
-
-    @Test
     public void shouldValidateDateYYYYMMMDDInYYYYMMDDFormatAndFail() {
         Assert.assertFalse(ExchangeValidator.validateDateFormat("2016-Jan-01", "yyyy-MM-dd"));
     }
 
     @Test
     public void shouldValidateDateYYYYMMDDInYYYYMMMDDFormatAndFail() {
-        Assert.assertFalse(ExchangeValidator.validateDateFormat("2016-01-01", "yyyy-<MM-dd"));
+        Assert.assertFalse(ExchangeValidator.validateDateFormat("2016-01-01", "yyyy-MMM-dd"));
     }
 
     @Test

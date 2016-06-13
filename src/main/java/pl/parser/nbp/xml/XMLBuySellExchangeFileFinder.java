@@ -41,6 +41,9 @@ public class XMLBuySellExchangeFileFinder implements XMLExchangeFileFinder {
     public List<String> findXMLFiles() {
         int yearFrom = publicationDateFrom.getYear();
         int yearTo = publicationDateTo.getYear();
+        if (yearFrom > yearTo) {
+            throw new IllegalStateException("Ending date year is earlier than starting date year");
+        }
 
         List<String> xmlFiles = new ArrayList<>();
         for (int year = yearFrom; year <= yearTo; year++) {

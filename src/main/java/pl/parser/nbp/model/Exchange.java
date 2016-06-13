@@ -9,15 +9,18 @@ public final class Exchange {
 
     private final BigDecimal buyValue;
     private final BigDecimal sellValue;
+    private final String code;
 
     /**
      * Creates object filling its fields.
      * @param buyValue The buy value of the exchange.
      * @param sellValue The sell value of the exchange.
+     * @param code The currency code.
      */
-    public Exchange(BigDecimal buyValue, BigDecimal sellValue) {
+    public Exchange(BigDecimal buyValue, BigDecimal sellValue, String code) {
         this.buyValue = buyValue;
         this.sellValue = sellValue;
+        this.code = code;
     }
 
     public BigDecimal getBuyValue() {
@@ -28,8 +31,12 @@ public final class Exchange {
         return sellValue;
     }
 
+    public String getCode() {
+        return code;
+    }
+
     @Override
     public String toString() {
-        return String.format("Exchange{buyValue=%s, sellValue=%s}", buyValue, sellValue);
+        return String.format("Exchange{buyValue=%s, sellValue=%s, code='%s'}", buyValue, sellValue, code);
     }
 }
