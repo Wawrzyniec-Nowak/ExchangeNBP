@@ -21,7 +21,7 @@ public final class ExchangeCalculator implements Calculator<Exchange> {
                 .stream()
                 .map(Exchange::getBuyValue)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_DOWN);
+        return sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
     }
 
     /**
@@ -31,15 +31,19 @@ public final class ExchangeCalculator implements Calculator<Exchange> {
      */
     @Override
     public BigDecimal calculateStandardDeviation(List<Exchange> exchanges) {
-        BigDecimal average = calculateAverage(exchanges);
-        BigDecimal sum = BigDecimal.ZERO;
+        BigDecimal sum = exchanges
+                .stream()
+                .map(Exchange::getSellValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal average = sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
 
+        sum = BigDecimal.ZERO;
         for (Exchange exchange : exchanges ) {
             BigDecimal difference = average.subtract(exchange.getSellValue());
             BigDecimal power = difference.multiply(difference);
             sum = sum.add(power);
         }
-        BigDecimal underRoot = sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_DOWN);
+        BigDecimal underRoot = sum.divide(new BigDecimal(exchanges.size()), BigDecimal.ROUND_HALF_DOWN);
         return new BigDecimal(Math.sqrt(underRoot.doubleValue()));
     }
 }
