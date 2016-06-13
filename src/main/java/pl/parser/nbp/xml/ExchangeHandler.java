@@ -5,22 +5,20 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import pl.parser.nbp.model.Exchange;
 import pl.parser.nbp.model.Filter;
+import pl.parser.nbp.model.Storage;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import static pl.parser.nbp.config.Constants.NBP.*;
 
 /**
- * Implementation of the SAX handler which parses the XML file and fetches Exchange entities from it.
+ * Implementation of the SAX handler which parses the XML file and saves parsed entities.
  */
-class ExchangeHandler extends DefaultHandler {
+public class ExchangeHandler extends DefaultHandler {
 
-    private final List<Exchange> exchanges;
+    private Storage storage;
     private Filter filter;
 
     private String publicationDate;
@@ -34,17 +32,12 @@ class ExchangeHandler extends DefaultHandler {
     private boolean exchangeSellValueFlag;
 
     /**
-     * Creates handler object and initializes the list of exchange objects.
+     * Creates handler object and injects its storage and filter fields.
+     * @param storage Storage object.
+     * @param filter Filter used to retrieved only these entities which meet criterion.
      */
-    public ExchangeHandler() {
-        this.exchanges = new ArrayList<>();
-    }
-
-    /**
-     * Sets the filter value.
-     * @param filter Filter which is used to get specific external files.
-     */
-    public void filter(Filter filter) {
+    public ExchangeHandler(Storage storage, Filter filter) {
+        this.storage = storage;
         this.filter = filter;
     }
 
@@ -106,7 +99,7 @@ class ExchangeHandler extends DefaultHandler {
                             new BigDecimal(exchangeBuyValue.replaceAll(",", ".")),
                             new BigDecimal(exchangeSellValue.replaceAll(",", "."))
                     );
-                    exchanges.add(exchange);
+                    storage.save(exchange);
                 }
             }
         }
@@ -140,13 +133,5 @@ class ExchangeHandler extends DefaultHandler {
             exchangeSellValue= new String(ch, start, length);
             exchangeSellValueFlag = false;
         }
-    }
-
-    /**
-     * Returns the immutable list of the parsed entities.
-     * @return The immutable list of Exchanges.
-     */
-    public List<Exchange> getExchanges() {
-        return Collections.unmodifiableList(exchanges);
     }
 }

@@ -2,15 +2,12 @@ package pl.parser.nbp.service;
 
 import pl.parser.nbp.model.Exchange;
 import pl.parser.nbp.model.Filter;
-import pl.parser.nbp.xml.ExchangeXMLParser;
-import pl.parser.nbp.xml.XMLParser;
-import pl.parser.nbp.xml.XMLBuySellExchangeFileFinder;
-import pl.parser.nbp.xml.XMLExchangeFileFinder;
+import pl.parser.nbp.model.Storage;
+import pl.parser.nbp.xml.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static pl.parser.nbp.config.Constants.NBP.DATE_FORMAT;
@@ -23,6 +20,19 @@ public class ExchangeFacade {
 
     private BigDecimal average;
     private BigDecimal standardDeviation;
+
+    private Storage storage;
+    private XMLParser parser;
+    private Calculator<Exchange> calculator;
+
+    /**
+     * Initializes the storage and services which are represented by parser and calculator.
+     */
+    public void boot() {
+        storage = new Storage();
+        parser = new ExchangeXMLParser();
+        calculator = new ExchangeCalculator();
+    }
 
     /**
      * Hides all operations which are required to calculate average and standard deviation values.
@@ -42,15 +52,12 @@ public class ExchangeFacade {
         List<String> xmlFileNames = fileFinder.findXMLFiles();
 
         // parsing
-        List<Exchange> filteredExchanges = new ArrayList<>();
-        XMLParser<Exchange> parser =
-                new ExchangeXMLParser(new Filter(currencyName, publicationDateFrom, publicationDateTo));
-        xmlFileNames.forEach(xmlFile -> filteredExchanges.addAll(parser.parse(PREFIX_PATH + xmlFile + ".xml")));
+        Filter filter = new Filter(currencyName, publicationDateFrom, publicationDateTo);
+        xmlFileNames.forEach(xmlFile -> parser.parse(PREFIX_PATH + xmlFile + ".xml", new ExchangeHandler(storage, filter)));
 
         // calculating
-        Calculator<Exchange> calculator = new ExchangeCalculator();
-        this.average = calculator.calculateAverage(filteredExchanges);
-        this.standardDeviation = calculator.calculateStandardDeviation(filteredExchanges);
+        this.average = calculator.calculateAverage(storage.getExchanges());
+        this.standardDeviation = calculator.calculateStandardDeviation(storage.getExchanges());
     }
 
     /**

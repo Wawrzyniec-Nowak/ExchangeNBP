@@ -1,17 +1,16 @@
 package pl.parser.nbp.xml;
 
-import java.util.List;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Stores methods related with parsing XML files.
- * @param <T> The type of the entities which should be retrieved from parsed files.
  */
-public interface XMLParser<T> {
+public interface XMLParser {
 
     /**
-     * Parses XML file and retrieves entities from it.
+     * Parses XML file.
      * @param path Path of the XML file.
-     * @return List of the entities parsed from XML file.
+     * @param handler SAX handler.
      */
-    List<T> parse(String path);
+    void parse(String path, DefaultHandler handler);
 }

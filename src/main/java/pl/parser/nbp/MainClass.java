@@ -37,10 +37,14 @@ public class MainClass {
 
         ExchangeFacade facade = new ExchangeFacade();
 
+        System.out.println("System init");
+        facade.boot();
+
         System.out.println("Computing has been started");
         long start = System.currentTimeMillis();
         facade.compute(currencyCode, publicationDateFrom, publicationDateTo);
         System.out.println("Computing has been finished after: " + (System.currentTimeMillis()-start) + "ms");
+
         facade.printCalculation();
     }
 }
